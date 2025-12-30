@@ -1,4 +1,4 @@
-# Face Sketch Plotter (Beginner Version)
+# Face Sketch Plotter 
 
 ## Overview
 
