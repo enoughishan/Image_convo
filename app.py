@@ -1,33 +1,44 @@
 import gradio as gr
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import os
 
 ASCII_CHARS = (
-    "@@@@@#####%%%%%%%&&&&&&$$$$$$"
+    "@@@@@#####%%%%%%%&&&&&&WWWWWW"
     "******+++++++======-----:::::.....     "
 )
-
-STEP_X = 4
-STEP_Y = 8
 
 def convert_image(image):
     if image is None:
         return None, None
 
-    small_image = image[::STEP_Y, ::STEP_X]
+    target_width = 100
+    scale_factor = target_width / image.shape[1]
+    
+    new_width = target_width
+    new_height = int(image.shape[0] * scale_factor * 0.55)
+    
+    step_x = int(image.shape[1] / new_width)
+    step_y = int(image.shape[0] / new_height)
+    
+    small_image = image[::step_y, ::step_x]
     height, width, _ = small_image.shape
 
     gray = np.dot(small_image[..., :3], [0.299, 0.587, 0.114])
 
-    mean_gray = np.mean(gray)
-    gray = (gray - mean_gray) * 1.6 + mean_gray
-    gray = np.clip(gray, 0, 255)
+    plt.close('all')
+    fig = plt.figure(figsize=(12, 12), facecolor='black')
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.axis('off')
+    
+    fig.canvas.draw()
 
     ascii_str = ""
-    html_content = "<pre style='font-family: monospace; background-color: black; font-size: 8px; white-space: pre; overflow-x: scroll;'>"
 
     for y in range(height):
         line = ""
-        html_line = ""
         for x in range(width):
             brightness = gray[y, x]
             
@@ -35,42 +46,47 @@ def convert_image(image):
             char = ASCII_CHARS[ascii_index]
             
             r, g, b = small_image[y, x]
+            color = (r / 255, g / 255, b / 255)
             
-            blend = brightness / 255
-            r = int(r * blend)
-            g = int(g * blend)
-            b = int(b * blend)
-
+            ax.text(
+                x, -y, 
+                char, 
+                color=color, 
+                fontfamily='monospace', 
+                fontsize=8,
+                horizontalalignment='center',
+                verticalalignment='center'
+            )
+            
             line += char
-            html_line += f"<span style='color: rgb({r},{g},{b})'>{char}</span>"
-
         ascii_str += line + "\n"
-        html_content += html_line + "<br>"
 
-    html_content += "</pre>"
+    ax.set_xlim(-1, width)
+    ax.set_ylim(-height, 1)
 
     with open("ascii.txt", "w", encoding="utf-8") as f:
         f.write(ascii_str)
 
-    return html_content, "ascii.txt"
+    return fig, "ascii.txt"
 
+default_image = "pirate.jpg" if os.path.exists("pirate.jpg") else None
 
-with gr.Blocks(title="Image to ASCII Converter") as app:
+with gr.Blocks(title="Colored ASCII Converter", theme=gr.themes.Soft()) as app:
 
-    gr.Markdown("## Image to ASCII Art Converter")
+    gr.Markdown("## Colored ASCII Art Converter")
 
     with gr.Row():
-        input_img = gr.Image(value="pirate.jpg", label="Original Image")
-        ascii_html = gr.HTML(label="ASCII Output")
+        input_img = gr.Image(value=default_image, label="Original Image")
+        plot_output = gr.Plot(label="Colored ASCII Result")
 
-    convert_button = gr.Button("Convert")
+    convert_button = gr.Button("Convert with Color")
     
     download_txt = gr.File(label="Download ascii.txt")
 
     convert_button.click(
         fn=convert_image,
         inputs=[input_img],
-        outputs=[ascii_html, download_txt]
+        outputs=[plot_output, download_txt]
     )
 
 if __name__ == "__main__":
