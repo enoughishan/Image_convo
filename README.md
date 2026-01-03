@@ -5,7 +5,7 @@
 - The ASCII art is rendered as a PNG image
 - Colored ASCII characters are used based on original pixel colors
 - The project is implemented using Python and Gradio
-- The application is compatible with both GitHub and Hugging Face Spaces
+
 
 ---
 
@@ -99,7 +99,7 @@
   - `pirate.jpg`
   - `requirements.txt`
   - `README.md`
-- Hugging Face will automatically build and deploy the app
+
 
 ---
 
@@ -117,8 +117,6 @@
 - Image-to-text visualization
 - ASCII art generation
 - Educational demonstrations
-- Creative coding projects
-- Portfolio and showcase applications
 
 ---
 
