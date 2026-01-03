@@ -1,34 +1,51 @@
-# Fixed Image to ASCII Art Converter
+# Image to ASCII Art Converter (Exact Aspect Ratio)
 
-- This project converts a single fixed image into ASCII art
-- The conversion logic is implemented using only loops
-- The output ASCII art is saved into a text file named ascii.txt
-- The application uses Python and Gradio for the user interface
+- This project converts a fixed image into a high-density ASCII art image
+- The ASCII output preserves the original image aspect ratio
+- The ASCII art is rendered as a PNG image
+- Colored ASCII characters are used based on original pixel colors
+- The project is implemented using Python and Gradio
+- The application is compatible with both GitHub and Hugging Face Spaces
 
 ---
 
-## Project Description
+## Project Overview
 
-- The application reads a fixed image file named pirate.jpg
-- The image is converted into grayscale
-- Pixel brightness values are mapped to ASCII characters
-- Nested for-loops are used to process each pixel
-- The generated ASCII art is displayed in the browser
-- The ASCII output is written to a file using a loop
+- A fixed image (`pirate.jpg`) is used as input
+- The image is converted into ASCII characters using pixel-level processing
+- ASCII characters are drawn directly at pixel coordinates
+- This ensures that the ASCII output visually matches the original image
+- The output is saved in both text and image formats
+
+---
+
+## Features
+
+- Exact aspect ratio preservation
+- Colored ASCII output
+- High-density ASCII rendering
+- Loop-based pixel processing
+- No external numerical libraries (no NumPy)
+- Hugging Face compatible
+- Simple and clean user interface
 
 ---
 
 ## Project Structure
 
-- app.py  
+- `app.py`
   - Main application file
   - Contains ASCII conversion logic and Gradio UI
-- pirate.jpg  
+- `pirate.jpg`
   - Fixed input image used for conversion
-- ascii.txt  
-  - Output file containing ASCII art (auto-generated)
-- requirements.txt  
-  - Lists required Python libraries
+- `ascii.png`
+  - Generated colored ASCII image (auto-created)
+- `ascii.txt`
+  - Generated ASCII text file (auto-created)
+- `requirements.txt`
+  - List of required Python dependencies
+- `README.md`
+  - Project documentation
 
 ---
 
@@ -40,51 +57,72 @@
 
 ---
 
-## ASCII Conversion Logic
+## How the ASCII Conversion Works
 
-- Image is opened using Pillow
-- Image is converted to grayscale
-- Image is resized while maintaining aspect ratio
-- Two nested loops iterate over image rows and columns
-- Each pixel value (0–255) is mapped to an ASCII character
-- ASCII characters are concatenated line by line
-- The final ASCII string is saved into ascii.txt using a loop
+- The original image is loaded and converted to grayscale
+- Image contrast is enhanced for better edge visibility
+- The image is scanned pixel by pixel using loops
+- Each pixel brightness is mapped to an ASCII character
+- ASCII characters are drawn directly at pixel positions
+- Original pixel color is applied to each ASCII character
+- The final ASCII image matches the original image dimensions
 
 ---
 
-## How to Run the Project
+## User Interface Flow
+
+- The original image is shown as a preview when the app loads
+- The ASCII output area is initially empty
+- Clicking the Convert button:
+  - Generates the ASCII image
+  - Displays the ASCII output preview
+  - Enables download of ascii.png and ascii.txt
+
+---
+
+## How to Run Locally
 
 - Install Python (version 3.8 or higher recommended)
-- Install required libraries using:
-  - pip install -r requirements.txt
-- Place pirate.jpg in the same directory as app.py
-- Run the application using:
-  - python app.py
+- Install dependencies using:
+  - `pip install -r requirements.txt`
+- Ensure `pirate.jpg` is present in the project directory
+- Run the application:
+  - `python app.py`
 - Open the displayed local URL in a browser
 
 ---
 
-## Output
+## Running on Hugging Face Spaces
 
-- ASCII art is shown in the web interface
-- The same ASCII art is saved in ascii.txt
-- The output file can be opened in any text editor
-- Best viewed using a monospace font
-
----
-
-## Key Features
-
-- Uses only loop-based logic
-- No advanced libraries like NumPy are used
-- Beginner-friendly and exam-oriented code
-- Fixed image ensures consistent output
-- ASCII art is stored permanently in a text file
+- Create a new Space with SDK set to Gradio
+- Upload the following files:
+  - `app.py`
+  - `pirate.jpg`
+  - `requirements.txt`
+  - `README.md`
+- Hugging Face will automatically build and deploy the app
 
 ---
 
 ## Notes
 
-- The ascii.txt file is generated only after clicking the Convert button
-- For best results, increase ASCII width
-- Viewing ASCII output in a monospace font is recommended
+- ASCII output quality depends on character density and contrast
+- The default font is used for maximum compatibility
+- The application intentionally uses loop-based logic for clarity
+- Best results are viewed on a dark background
+
+---
+
+## Use Cases
+
+- Image-to-text visualization
+- ASCII art generation
+- Educational demonstrations
+- Creative coding projects
+- Portfolio and showcase applications
+
+---
+
+## License
+
+- This project is provided for educational and demonstration purposes
