@@ -11,7 +11,7 @@
 
 ## Project Overview
 
-- A fixed image (`pirate.jpg`) is used as input
+- A image (`pirate.jpg`) is used as input
 - The image is converted into ASCII characters using pixel-level processing
 - ASCII characters are drawn directly at pixel coordinates
 - This ensures that the ASCII output visually matches the original image
@@ -25,8 +25,7 @@
 - Colored ASCII output
 - High-density ASCII rendering
 - Loop-based pixel processing
-- No external numerical libraries (no NumPy)
-- Hugging Face compatible
+- No external numerical libraries (no numpy)
 - Simple and clean user interface
 
 ---
