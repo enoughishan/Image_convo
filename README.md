@@ -1,4 +1,4 @@
-# Image to ASCII Art Converter (Exact Aspect Ratio)
+# Image to ASCII Art Converter 
 
 - This project converts a fixed image into a high-density ASCII art image
 - The ASCII output preserves the original image aspect ratio
