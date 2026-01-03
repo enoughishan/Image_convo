@@ -1,32 +1,30 @@
-# Image to ASCII Art Converter 
+# Image to ASCII Art Converter (NumPy Edition)
 
-- This project converts a fixed image into a high-density ASCII art image
-- The ASCII output preserves the original image aspect ratio
-- The ASCII art is rendered as a PNG image
+- This project converts a fixed image into a high-density ASCII art representation
+- The ASCII output preserves the original image aspect ratio using intelligent sampling
+- The ASCII art is rendered as **Colored HTML** directly in the browser
 - Colored ASCII characters are used based on original pixel colors
-- The project is implemented using Python and Gradio
-
+- The project is implemented using **Python, NumPy, and Gradio**
 
 ---
 
 ## Project Overview
 
-- A image (`pirate.jpg`) is used as input
-- The image is converted into ASCII characters using pixel-level processing
-- ASCII characters are drawn directly at pixel coordinates
-- This ensures that the ASCII output visually matches the original image
-- The output is saved in both text and image formats
+- An image (`pirate.jpg`) is used as input
+- The image is processed efficiently using **NumPy arrays**
+- The output is rendered using HTML spans to simulate a colored image without generating a PNG file
+- This ensures the output can be displayed instantly without heavy image libraries (like Pillow)
+- The output is provided as a downloadable text file and a visual HTML preview
 
 ---
 
 ## Features
 
-- Exact aspect ratio preservation
-- Colored ASCII output
-- High-density ASCII rendering
-- Loop-based pixel processing
-- No external numerical libraries (no numpy)
-- Simple and clean user interface
+- **Efficient Processing:** Uses NumPy for fast matrix operations (resizing, grayscale, contrast)
+- **Aspect Ratio Correction:** Uses differential step sampling (X vs Y) to prevent vertical stretching
+- **HTML Rendering:** Displays colored ASCII art using standard HTML/CSS
+- **No Image Generation:** Pure text-based solution (lighter weight)
+- **Simple UI:** Clean interface built with Gradio
 
 ---
 
@@ -34,11 +32,9 @@
 
 - `app.py`
   - Main application file
-  - Contains ASCII conversion logic and Gradio UI
+  - Contains NumPy processing logic and Gradio UI
 - `pirate.jpg`
   - Fixed input image used for conversion
-- `ascii.png`
-  - Generated colored ASCII image (auto-created)
 - `ascii.txt`
   - Generated ASCII text file (auto-created)
 - `requirements.txt`
@@ -52,19 +48,19 @@
 
 - Python
 - Gradio
-- Pillow (PIL)
+- NumPy
 
 ---
 
 ## How the ASCII Conversion Works
 
-- The original image is loaded and converted to grayscale
-- Image contrast is enhanced for better edge visibility
-- The image is scanned pixel by pixel using loops
-- Each pixel brightness is mapped to an ASCII character
-- ASCII characters are drawn directly at pixel positions
-- Original pixel color is applied to each ASCII character
-- The final ASCII image matches the original image dimensions
+- The original image is loaded as a **NumPy array**
+- The image is "downsampled" using array slicing (`image[::8, ::4]`) to fix aspect ratio
+- Grayscale conversion is performed using a **dot product** of RGB channels
+- Contrast is enhanced using vectorized math operations
+- A loop iterates through the processed array to generate an HTML string
+- Each character is wrapped in a `<span>` tag with the original pixel's RGB color
+- The final result is displayed as a raw HTML block
 
 ---
 
@@ -73,9 +69,9 @@
 - The original image is shown as a preview when the app loads
 - The ASCII output area is initially empty
 - Clicking the Convert button:
-  - Generates the ASCII image
-  - Displays the ASCII output preview
-  - Enables download of ascii.png and ascii.txt
+  - Processes the image array
+  - Renders the colored ASCII HTML
+  - Enables download of `ascii.txt`
 
 ---
 
@@ -100,23 +96,21 @@
   - `requirements.txt`
   - `README.md`
 
-
 ---
 
 ## Notes
 
-- ASCII output quality depends on character density and contrast
-- The default font is used for maximum compatibility
-- The application intentionally uses loop-based logic for clarity
-- Best results are viewed on a dark background
+- ASCII output quality relies on the `STEP` variables defined in the code
+- The output uses a monospace font and strict line-height in HTML to align characters
+- Best results are viewed on a dark background (set automatically in the HTML)
 
 ---
 
 ## Use Cases
 
-- Image-to-text visualization
-- ASCII art generation
-- Educational demonstrations
+- Efficient image processing demos
+- HTML/CSS based visualization
+- Educational demonstrations of NumPy array slicing
 
 ---
 
