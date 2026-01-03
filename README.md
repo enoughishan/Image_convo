@@ -11,9 +11,9 @@
 
 - An image (`pirate.jpg`) is used as input
 - The image is processed efficiently using **NumPy arrays**
-- The output is rendered using HTML spans to simulate a colored image without generating a PNG file
+- The output is rendered  to simulate a colored image without generating a PNG file
 - This ensures the output can be displayed instantly without heavy image libraries (like Pillow)
-- The output is provided as a downloadable text file and a visual HTML preview
+- The output is provided as a downloadable text file and a visual  preview
 
 ---
 
@@ -57,7 +57,6 @@
 - Contrast is enhanced using vectorized math operations
 - A loop iterates through the processed array 
 - Each character is wrapped in a `<span>` tag with the original pixel's RGB color
-- The final result is displayed as a raw HTML block
 
 ---
 
@@ -98,8 +97,8 @@
 ## Notes
 
 - ASCII output quality relies on the `STEP` variables defined in the code
-- The output uses a monospace font and strict line-height in HTML to align characters
-- Best results are viewed on a dark background (set automatically in the HTML)
+- The output uses a monospace font and strict line-height.
+- Best results are viewed on a dark background 
 
 ---
 
