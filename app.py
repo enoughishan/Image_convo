@@ -1,110 +1,76 @@
 import gradio as gr
-from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+import numpy as np
 
 ASCII_CHARS = (
     "@@@@@#####%%%%%%%&&&&&&$$$$$$"
     "******+++++++======-----:::::.....     "
 )
 
-STEP = 2
+STEP_X = 4
+STEP_Y = 8
 
+def convert_image(image):
+    if image is None:
+        return None, None
 
-def load_original():
-    image = Image.open("pirate.jpg")
-    return image
+    small_image = image[::STEP_Y, ::STEP_X]
+    height, width, _ = small_image.shape
 
+    gray = np.dot(small_image[..., :3], [0.299, 0.587, 0.114])
 
-def convert_image():
+    mean_gray = np.mean(gray)
+    gray = (gray - mean_gray) * 1.6 + mean_gray
+    gray = np.clip(gray, 0, 255)
 
-    original_image = Image.open("pirate.jpg")
-    original_image = original_image.convert("RGB")
+    ascii_str = ""
+    html_content = "<pre style='font-family: monospace; background-color: black; font-size: 8px; white-space: pre; overflow-x: scroll;'>"
 
-    gray_image = original_image.convert("L")
-
-    contrast_tool = ImageEnhance.Contrast(gray_image)
-    gray_image = contrast_tool.enhance(1.6)
-
-    image_width = gray_image.size[0]
-    image_height = gray_image.size[1]
-
-    font = ImageFont.load_default()
-
-    ascii_image = Image.new("RGB", (image_width, image_height), "black")
-    draw = ImageDraw.Draw(ascii_image)
-
-    ascii_text = []
-
-    y = 0
-    while y < image_height:
-
+    for y in range(height):
         line = ""
-        x = 0
-
-        while x < image_width:
-
-            brightness = gray_image.getpixel((x, y))
-
+        html_line = ""
+        for x in range(width):
+            brightness = gray[y, x]
+            
             ascii_index = int(brightness * (len(ASCII_CHARS) - 1) / 255)
+            char = ASCII_CHARS[ascii_index]
+            
+            r, g, b = small_image[y, x]
+            
+            blend = brightness / 255
+            r = int(r * blend)
+            g = int(g * blend)
+            b = int(b * blend)
 
-            ascii_char = ASCII_CHARS[ascii_index]
+            line += char
+            html_line += f"<span style='color: rgb({r},{g},{b})'>{char}</span>"
 
-            red, green, blue = original_image.getpixel((x, y))
+        ascii_str += line + "\n"
+        html_content += html_line + "<br>"
 
-            blend_value = brightness / 255
-            final_color = (
-                int(red * blend_value),
-                int(green * blend_value),
-                int(blue * blend_value)
-            )
+    html_content += "</pre>"
 
-            draw.text((x, y), ascii_char, fill=final_color, font=font)
+    with open("ascii.txt", "w", encoding="utf-8") as f:
+        f.write(ascii_str)
 
-            line = line + ascii_char
-
-            x = x + STEP
-
-        ascii_text.append(line)
-
-        y = y + STEP
-
-    text_file = open("ascii.txt", "w", encoding="utf-8")
-    for text_line in ascii_text:
-        text_file.write(text_line)
-        text_file.write("\n")
-    text_file.close()
-
-    ascii_image.save("ascii.png")
-
-    return ascii_image, "ascii.png", "ascii.txt"
+    return html_content, "ascii.txt"
 
 
 with gr.Blocks(title="Image to ASCII Converter") as app:
 
     gr.Markdown("## Image to ASCII Art Converter")
-    gr.Markdown("Original image is shown first. Click Convert to generate ASCII output.")
 
     with gr.Row():
-        original_preview = gr.Image(
-            value=load_original(),
-            label="Original Image",
-            interactive=False
-        )
-
-        ascii_preview = gr.Image(
-            label="ASCII Output",
-            interactive=False
-        )
+        input_img = gr.Image(value="pirate.jpg", label="Original Image")
+        ascii_html = gr.HTML(label="ASCII Output")
 
     convert_button = gr.Button("Convert")
-
-    with gr.Row():
-        download_png = gr.File(label="Download ascii.png")
-        download_txt = gr.File(label="Download ascii.txt")
+    
+    download_txt = gr.File(label="Download ascii.txt")
 
     convert_button.click(
         fn=convert_image,
-        inputs=[],
-        outputs=[ascii_preview, download_png, download_txt]
+        inputs=[input_img],
+        outputs=[ascii_html, download_txt]
     )
 
 if __name__ == "__main__":
