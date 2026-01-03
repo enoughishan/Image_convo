@@ -1,4 +1,4 @@
-# Image to ASCII Art Converter (NumPy Edition)
+# Image to ASCII Art Converter 
 
 - This project converts a fixed image into a high-density ASCII art representation
 - The ASCII output preserves the original image aspect ratio using intelligent sampling
