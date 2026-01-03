@@ -2,7 +2,6 @@
 
 - This project converts a fixed image into a high-density ASCII art representation
 - The ASCII output preserves the original image aspect ratio using intelligent sampling
-- The ASCII art is rendered as **Colored HTML** directly in the browser
 - Colored ASCII characters are used based on original pixel colors
 - The project is implemented using **Python, NumPy, and Gradio**
 
@@ -22,10 +21,8 @@
 
 - **Efficient Processing:** Uses NumPy for fast matrix operations (resizing, grayscale, contrast)
 - **Aspect Ratio Correction:** Uses differential step sampling (X vs Y) to prevent vertical stretching
-- **HTML Rendering:** Displays colored ASCII art using standard HTML/CSS
 - **No Image Generation:** Pure text-based solution (lighter weight)
 - **Simple UI:** Clean interface built with Gradio
-
 ---
 
 ## Project Structure
@@ -58,7 +55,7 @@
 - The image is "downsampled" using array slicing (`image[::8, ::4]`) to fix aspect ratio
 - Grayscale conversion is performed using a **dot product** of RGB channels
 - Contrast is enhanced using vectorized math operations
-- A loop iterates through the processed array to generate an HTML string
+- A loop iterates through the processed array 
 - Each character is wrapped in a `<span>` tag with the original pixel's RGB color
 - The final result is displayed as a raw HTML block
 
@@ -70,7 +67,7 @@
 - The ASCII output area is initially empty
 - Clicking the Convert button:
   - Processes the image array
-  - Renders the colored ASCII HTML
+  - Renders the colored ASCII 
   - Enables download of `ascii.txt`
 
 ---
@@ -108,8 +105,7 @@
 
 ## Use Cases
 
-- Efficient image processing demos
-- HTML/CSS based visualization
+- Efficient image processing 
 - Educational demonstrations of NumPy array slicing
 
 ---
