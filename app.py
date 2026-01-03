@@ -1,73 +1,81 @@
 import gradio as gr
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
-# Dense ASCII characters (for output like your example)
-ASCII_CHARS = "#@%&$*+=-:. "
+ASCII_CHARS = (
+    "@@@@@#####%%%%%%%&&&&&&$$$$$$"
+    "******+++++++======-----:::::.....     "
+)
 
-def convert_fixed_image(width):
-    # Load ONLY this image
-    image = Image.open("pirate.jpg")
+STEP = 3  
 
-    # Convert to grayscale
-    image = image.convert("L")
+def load_original():
+    return Image.open("pirate.jpg")
 
-    old_w = image.width
-    old_h = image.height
+def convert_image():
+    original = Image.open("pirate.jpg").convert("RGB")
+    gray = original.convert("L")
+    gray = ImageEnhance.Contrast(gray).enhance(1.8)
 
-    # Maintain aspect ratio
-    ratio = old_h / old_w
-    new_h = int(width * ratio / 1.7)
+    img_w, img_h = gray.size
 
-    image = image.resize((width, new_h))
+    font = ImageFont.load_default()
 
-    ascii_art = ""
+    ascii_img = Image.new("RGB", (img_w, img_h), "black")
+    draw = ImageDraw.Draw(ascii_img)
 
-    # LOOP through pixels
-    for y in range(new_h):
-        for x in range(width):
-            pixel = image.getpixel((x, y))  # 0–255
+    ascii_lines = []
 
-            index = int(pixel * (len(ASCII_CHARS) - 1) / 255)
-            ascii_art = ascii_art + ASCII_CHARS[index]
+    
+    for y in range(0, img_h, STEP):
+        line = ""
+        for x in range(0, img_w, STEP):
+            pixel = gray.getpixel((x, y))
+            index = int(pixel / 255 * (len(ASCII_CHARS) - 1))
+            ch = ASCII_CHARS[index]
+            color = original.getpixel((x, y))
 
-        ascii_art = ascii_art + "\n"
+            draw.text((x, y), ch, fill=color, font=font)
+            line += ch
 
-    # Save ASCII using loop
-    file = open("ascii.txt", "w", encoding="utf-8")
-    for ch in ascii_art:
-        file.write(ch)
-    file.close()
+        ascii_lines.append(line)
 
-    return ascii_art, "ascii.txt"
+    
+    with open("ascii.txt", "w", encoding="utf-8") as f:
+        for line in ascii_lines:
+            f.write(line + "\n")
+
+    ascii_img.save("ascii.png")
+
+    return ascii_img, "ascii.png", "ascii.txt"
 
 
-# ---------- GRADIO UI ----------
-with gr.Blocks(title="Fixed Image to ASCII") as app:
-    gr.Markdown("# 🏴‍☠️ Pirate Image → ASCII Art")
-    gr.Markdown("Converts **only one fixed image** using **loops only**")
+# ---------------- UI ----------------
+with gr.Blocks(title="Image to ASCII") as app:
+    gr.Markdown("## Image to ASCII Converter")
+    gr.Markdown("Original image is shown first then ASCII output appears after conversion.")
 
-    width_slider = gr.Slider(
-        minimum=80,
-        maximum=200,
-        value=140,
-        step=10,
-        label="ASCII Width (Higher = More Detail)"
-    )
+    with gr.Row():
+        original_preview = gr.Image(
+            value=load_original(),
+            label="Original Image",
+            interactive=False
+        )
 
-    convert_btn = gr.Button("Convert Image")
+        ascii_preview = gr.Image(
+            label="ASCII Output",
+            interactive=False
+        )
 
-    ascii_box = gr.Textbox(
-        label="ASCII Output",
-        lines=30,
-        interactive=False
-    )
+    convert_btn = gr.Button("Convert")
 
-    download = gr.File(label="Download ascii.txt")
+    with gr.Row():
+        download_png = gr.File(label="Download ascii.png")
+        download_txt = gr.File(label="Download ascii.txt")
 
     convert_btn.click(
-        fn=convert_fixed_image,
-        inputs=[width_slider],
-        outputs=[ascii_box, download]
+        fn=convert_image,
+        inputs=[],
+        outputs=[ascii_preview, download_png, download_txt]
     )
 
 if __name__ == "__main__":
