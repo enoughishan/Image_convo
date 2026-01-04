@@ -9,17 +9,16 @@ Instead of generating a standard image file, it uses **Matplotlib** to plot indi
 ## 🚀 Features
 
 * **True Color Rendering:** Maps the color of every pixel to the corresponding ASCII character.
-* **Matplotlib Rendering:** Uses a plotting engine to draw text instead of standard image manipulation.
+* **Matplotlib Rendering:**draw text instead of standard image manipulation.
 * **Aspect Ratio Correction:** Automatically calculates the correct spacing and scaling to prevent the ASCII art from looking stretched.
 * **Dual Output:** Generates both a visual plot and a downloadable `.txt` file (plain text version).
-* **Hugging Face Ready:** Configured with `headless` mode (`Agg` backend) for seamless deployment on Hugging Face Spaces.
+  
 
-## 🛠️ Technologies Used
+
+  ## 🛠️ Technologies Used
 
 * **Python:** Core programming language.
 * **Gradio:** For the web interface (UI).
-* **NumPy:** For efficient pixel array manipulation and resizing.
-* **Matplotlib:** For rendering the colored text onto a figure.
 
 ## 📂 Project Structure
 
@@ -35,7 +34,7 @@ Instead of generating a standard image file, it uses **Matplotlib** to plot indi
     ```bash
     pip install -r requirements.txt
     ```
-    *(If `requirements.txt` is missing, install manually: `pip install gradio numpy matplotlib`)*
+
 3.  **Run the App:**
     ```bash
     python app.py
