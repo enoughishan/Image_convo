@@ -1,90 +1,118 @@
 import gradio as gr
-import numpy as np
-import matplotlib.pyplot as plt
 import os
+import math
 
-ASCII_CHARS = (
-    "@@@@@#####%%%%%%%&&&&&&WWWWWW"
-    "******+++++++======-----:::::.....     "
-)
+ASCII_CHARS_LIST = [
+    '$', '@', 'B', '%', '8', '&', 'W', 'M', '#', '*', 
+    'o', 'a', 'h', 'k', 'b', 'd', 'p', 'q', 'w', 'm', 
+    'Z', 'O', '0', 'Q', 'L', 'C', 'J', 'U', 'Y', 'X', 
+    'z', 'c', 'v', 'u', 'n', 'x', 'r', 'j', 'f', 't', 
+    '/', '\\', '|', '(', ')', '1', '{', '}', '[', ']', 
+    '?', '-', '_', '+', '~', '<', '>', 'i', '!', 'l', 
+    'I', ';', ':', ',', '"', '^', '`', "'", '.', ' ' 
+]
 
-def convert_image(image):
-    if image is None:
+def calculate_luminance(red, green, blue):
+    r_weight = 0.299
+    g_weight = 0.587
+    b_weight = 0.114
+    luminance = (r_weight * red) + (g_weight * green) + (b_weight * blue)
+    return luminance / 255.0
+
+def apply_contrast_logic(brightness_value):
+    contrast_factor = 0.5
+    adjusted_value = math.pow(brightness_value, contrast_factor)
+    return adjusted_value
+
+def get_char_for_pixel(brightness):
+    list_length = len(ASCII_CHARS_LIST)
+    char_index = int(brightness * (list_length - 1))
+    if char_index < 0:
+        char_index = 0
+    if char_index >= list_length:
+        char_index = list_length - 1
+    return ASCII_CHARS_LIST[char_index]
+
+def convert_image_to_ascii(image_input):
+    if image_input is None:
         return None, None
 
-    target_width = 100
-    scale_factor = target_width / image.shape[1]
-    
-    new_width = target_width
-    new_height = int(image.shape[0] * scale_factor * 0.55)
-    
-    step_x = int(image.shape[1] / new_width)
-    step_y = int(image.shape[0] / new_height)
-    
-    small_image = image[::step_y, ::step_x]
-    height, width, _ = small_image.shape
+    original_height = image_input.shape[0]
+    original_width = image_input.shape[1]
 
-    gray = np.dot(small_image[..., :3], [0.299, 0.587, 0.114])
+    target_width_chars = 250 
+    step_x = int(original_width / target_width_chars)
+    if step_x < 1:
+        step_x = 1
+        
+    step_y = step_x * 2
 
-    plt.close('all')
-    fig = plt.figure(figsize=(12, 12), facecolor='black')
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.axis('off')
-    
-    fig.canvas.draw()
+    final_ascii_string = ""
 
-    ascii_str = ""
-
-    for y in range(height):
-        line = ""
-        for x in range(width):
-            brightness = gray[y, x]
+    current_y = 0
+    while current_y < original_height:
+        current_line_string = ""
+        current_x = 0
+        while current_x < original_width:
+            pixel_data = image_input[current_y][current_x]
+            red_val = int(pixel_data[0])
+            green_val = int(pixel_data[1])
+            blue_val = int(pixel_data[2])
             
-            ascii_index = int(brightness * (len(ASCII_CHARS) - 1) / 255)
-            char = ASCII_CHARS[ascii_index]
+            brightness = calculate_luminance(red_val, green_val, blue_val)
+            adjusted_brightness = apply_contrast_logic(brightness)
+            character = get_char_for_pixel(adjusted_brightness)
             
-            r, g, b = small_image[y, x]
-            color = (r / 255, g / 255, b / 255)
+            current_line_string = current_line_string + character
+            current_x = current_x + step_x
             
-            ax.text(
-                x, -y, 
-                char, 
-                color=color, 
-                fontfamily='monospace', 
-                fontsize=8,
-                horizontalalignment='center',
-                verticalalignment='center'
-            )
-            
-            line += char
-        ascii_str += line + "\n"
+        final_ascii_string = final_ascii_string + current_line_string + "\n"
+        current_y = current_y + step_y
+        
+    filename = "ascii_art.txt"
+    with open(filename, "w", encoding="utf-8") as file_handle:
+        file_handle.write(final_ascii_string)
 
-    ax.set_xlim(-1, width)
-    ax.set_ylim(-height, 1)
+    return final_ascii_string, filename
 
-    with open("ascii.txt", "w", encoding="utf-8") as f:
-        f.write(ascii_str)
+default_image_path = "pirate.jpg"
+if os.path.exists("pirate.jpg"):
+    initial_image = default_image_path
+else:
+    initial_image = None
 
-    return fig, "ascii.txt"
+custom_css = """
+.ascii-viewer textarea {
+    font-family: 'Courier New', monospace !important;
+    font-weight: 900 !important;
+    font-size: 7px !important;
+    line-height: 0.55 !important;
+    white-space: pre !important; 
+    overflow-x: scroll !important;
+    background-color: white !important;
+    color: black !important;
+    height: 80vh !important;
+}
+"""
 
-default_image = "pirate.jpg" if os.path.exists("pirate.jpg") else None
-
-with gr.Blocks(title="Colored ASCII Converter", theme=gr.themes.Soft()) as app:
-
-    gr.Markdown("## Colored ASCII Art Converter")
+with gr.Blocks(title="Detailed ASCII Generator", theme=gr.themes.Soft(), css=custom_css) as app:
+    gr.Markdown("## Pro ASCII Art Generator")
 
     with gr.Row():
-        input_img = gr.Image(value=default_image, label="Original Image")
-        plot_output = gr.Plot(label="Colored ASCII Result")
+        input_component = gr.Image(value=initial_image, label="Upload Image")
+        output_component = gr.Textbox(
+            label="ASCII Output", 
+            lines=100, 
+            elem_classes="ascii-viewer"
+        )
 
-    convert_button = gr.Button("Convert with Color")
-    
-    download_txt = gr.File(label="Download ascii.txt")
+    convert_button = gr.Button("Generate ASCII Art", variant="primary")
+    download_component = gr.File(label="Download .txt File")
 
     convert_button.click(
-        fn=convert_image,
-        inputs=[input_img],
-        outputs=[plot_output, download_txt]
+        fn=convert_image_to_ascii,
+        inputs=[input_component],
+        outputs=[output_component, download_component]
     )
 
 if __name__ == "__main__":
