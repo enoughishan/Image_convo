@@ -1,6 +1,6 @@
 # 🏴‍☠️ Captain Jack ASCII: Digital Portrait Generator
 
-A standalone, high-fidelity ASCII art generator that renders a portrait of **Johnny Depp as Captain Jack Sparrow**. This project utilizes pure Python to create a retro-style, animated terminal visualization without requiring any external image processing libraries.
+A standalone, high-fidelity ASCII art that renders a portrait of **Johnny Depp as Captain Jack Sparrow**. This project utilizes pure Python to create a retro-style, animated terminal visualization without requiring any external image processing libraries.
 
 ## 📖 Overview
 
